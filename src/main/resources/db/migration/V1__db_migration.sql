@@ -1,0 +1,26 @@
+CREATE TABLE IF NOT EXISTS users (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    user_name VARCHAR(50) NOT NULL,
+    PRIMARY KEY (id)
+    );
+
+CREATE TABLE IF NOT EXISTS events (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    user_id BIGINT NOT NULL,
+    file_id BIGINT NOT NULL,
+    PRIMARY KEY (id)
+    );
+
+ALTER TABLE events
+    ADD FOREIGN KEY (user_id) REFERENCES users (id);
+
+CREATE TABLE IF NOT EXISTS files (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    file_name VARCHAR(50) NOT NULL,
+    file_path VARCHAR(200) NOT NULL,
+    PRIMARY KEY (id)
+    );
+
+ALTER TABLE events
+    ADD FOREIGN KEY (file_id) REFERENCES files (id);
+
