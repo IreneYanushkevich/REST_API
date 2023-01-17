@@ -1,55 +1,58 @@
-package com.irinayanushkevich.restapi.servlet;
+package com.irinayanushkevich.restapi.rest;
 
 import com.irinayanushkevich.restapi.model.User;
-import com.irinayanushkevich.restapi.repository.UserRepository;
-import com.irinayanushkevich.restapi.repository.hib_rep_impl.HibUserRepositoryImpl;
+import com.irinayanushkevich.restapi.service.UserService;
 import com.irinayanushkevich.restapi.util.GsonUtil;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
-public class UserServlet extends HttpServlet {
+public class UserRestControllerV1 extends HttpServlet {
+    private final String urlPattern = "/api/v1/users";
 
-    private final UserRepository userRep = new HibUserRepositoryImpl();
+    private final UserService userService = new UserService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        GsonUtil gsonUtil = new GsonUtil(response);
+
         request.setCharacterEncoding("UTF-8");
-        int id = Integer.parseInt(request.getParameter("id"));
-        if (id == 0) {
-            gsonUtil.writeToJson(userRep.getAll());
+        String url = request.getRequestURL().toString();
+        String id = url.substring(url.indexOf(urlPattern) + urlPattern.length());
+        if (id.isBlank()) {
+            List<User> users = userService.getAll();
+            GsonUtil.writeToJson(response, users);
         } else {
-            gsonUtil.writeToJson(userRep.getById(id));
+            User user = userService.getById(Integer.parseInt(id));
+            GsonUtil.writeToJson(response, user);
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        GsonUtil gsonUtil = new GsonUtil(response);
         request.setCharacterEncoding("UTF-8");
-        int id = Integer.parseInt(request.getParameter("id"));
         String name = request.getParameter("user_name");
-        gsonUtil.writeToJson(userRep.create(new User(id, name)));
+        User user = userService.save(name);
+        GsonUtil.writeToJson(response, user);
     }
 
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        GsonUtil gsonUtil = new GsonUtil(response);
         request.setCharacterEncoding("UTF-8");
-        int id = Integer.parseInt(request.getParameter("id"));
+        String url = request.getRequestURL().toString();
+        String id = url.substring(url.indexOf(urlPattern) + urlPattern.length());
         String name = request.getParameter("user_name");
-        gsonUtil.writeToJson(userRep.update(new User(id, name)));
+        User user = userService.update(Integer.parseInt(id), name);
+        GsonUtil.writeToJson(response, user);
     }
 
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        GsonUtil gsonUtil = new GsonUtil(response);
         request.setCharacterEncoding("UTF-8");
         int id = Integer.parseInt(request.getParameter("id"));
-        userRep.delete(id);
-        gsonUtil.writeToJson("User with id=" + id + " was deleted");
+        userService.delete(id);
+        GsonUtil.writeToJson(response, "User with id=" + id + " was deleted");
     }
 }

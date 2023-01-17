@@ -8,7 +8,6 @@ import org.hibernate.Transaction;
 
 import java.util.List;
 
-@SuppressWarnings("DuplicatedCode")
 public class HibUserRepositoryImpl implements UserRepository {
 
     private Transaction transaction;
@@ -45,18 +44,11 @@ public class HibUserRepositoryImpl implements UserRepository {
 
     @Override
     public User getById(Integer id) {
-        User user = null;
         try (Session session = HibernateUtil.openSession()) {
-            transaction = session.beginTransaction();
-            user = session.get(User.class, id);
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
+            return session.createQuery("FROM User u LEFT JOIN FETCH u.events WHERE u.id =:user_id", User.class)
+                    .setParameter("id", id)
+                    .getSingleResult();
         }
-        return user;
     }
 
     @Override
@@ -76,17 +68,8 @@ public class HibUserRepositoryImpl implements UserRepository {
 
     @Override
     public List<User> getAll() {
-        List<User> users = null;
         try (Session session = HibernateUtil.openSession()) {
-            transaction = session.beginTransaction();
-            users = session.createQuery("FROM User", User.class).getResultList();
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
+            return session.createQuery("FROM User", User.class).getResultList();
         }
-        return users;
     }
 }

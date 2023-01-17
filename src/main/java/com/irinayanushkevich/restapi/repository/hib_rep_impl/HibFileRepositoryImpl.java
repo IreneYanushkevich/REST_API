@@ -8,11 +8,9 @@ import org.hibernate.Transaction;
 
 import java.util.List;
 
-@SuppressWarnings("DuplicatedCode")
 public class HibFileRepositoryImpl implements FileRepository {
 
     private Transaction transaction;
-
 
     @Override
     public File create(File file) {
@@ -46,18 +44,9 @@ public class HibFileRepositoryImpl implements FileRepository {
 
     @Override
     public File getById(Integer id) {
-        File file = null;
         try (Session session = HibernateUtil.openSession()) {
-            transaction = session.beginTransaction();
-            file = session.get(File.class, id);
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
+            return session.get(File.class, id);
         }
-        return file;
     }
 
     @Override
@@ -77,17 +66,8 @@ public class HibFileRepositoryImpl implements FileRepository {
 
     @Override
     public List<File> getAll() {
-        List<File> files = null;
         try (Session session = HibernateUtil.openSession()) {
-            transaction = session.beginTransaction();
-            files = session.createQuery("FROM File", File.class).getResultList();
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
+            return session.createQuery("FROM File", File.class).getResultList();
         }
-        return files;
     }
 }

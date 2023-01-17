@@ -8,7 +8,6 @@ import org.hibernate.Transaction;
 
 import java.util.List;
 
-@SuppressWarnings("DuplicatedCode")
 public class HibEventRepositoryImpl implements EventRepository {
 
     private Transaction transaction;
@@ -45,18 +44,9 @@ public class HibEventRepositoryImpl implements EventRepository {
 
     @Override
     public Event getById(Integer id) {
-        Event event = null;
         try (Session session = HibernateUtil.openSession()) {
-            transaction = session.beginTransaction();
-            event = session.get(Event.class, id);
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
+            return session.get(Event.class, id);
         }
-        return event;
     }
 
     @Override
@@ -76,17 +66,8 @@ public class HibEventRepositoryImpl implements EventRepository {
 
     @Override
     public List<Event> getAll() {
-        List<Event> events = null;
         try (Session session = HibernateUtil.openSession()) {
-            transaction = session.beginTransaction();
-            events = session.createQuery("FROM Event", Event.class).getResultList();
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
+            return session.createQuery("FROM Event", Event.class).getResultList();
         }
-        return events;
     }
 }

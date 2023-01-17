@@ -14,7 +14,7 @@ public class User {
     private Integer id;
     @Column(name = "user_name")
     private String name;
-    @OneToMany(mappedBy = "used_id", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "id", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Event> events;
 
     public User() {
@@ -22,6 +22,10 @@ public class User {
 
     public User(Integer id, String name) {
         this.id = id;
+        this.name = name;
+    }
+
+    public User(String name) {
         this.name = name;
     }
 
@@ -87,5 +91,10 @@ public class User {
         result = prime * result + ((events == null) ? 0 : events.hashCode());
         result = prime * result + id;
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "User id: " + id + ", name: " + name;
     }
 }

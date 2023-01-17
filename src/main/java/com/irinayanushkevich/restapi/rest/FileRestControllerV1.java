@@ -1,57 +1,60 @@
-package com.irinayanushkevich.restapi.servlet;
+package com.irinayanushkevich.restapi.rest;
 
 import com.irinayanushkevich.restapi.model.File;
-import com.irinayanushkevich.restapi.repository.FileRepository;
-import com.irinayanushkevich.restapi.repository.hib_rep_impl.HibFileRepositoryImpl;
+import com.irinayanushkevich.restapi.service.FileService;
 import com.irinayanushkevich.restapi.util.GsonUtil;
 
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
-public class FileServlet extends HttpServlet {
+public class FileRestControllerV1 extends HttpServlet {
 
-    private final FileRepository fileRep = new HibFileRepositoryImpl();
-
+    private final FileService fileService = new FileService();
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        GsonUtil gsonUtil = new GsonUtil(response);
         request.setCharacterEncoding("UTF-8");
         int id = Integer.parseInt(request.getParameter("id"));
         if (id == 0) {
-            gsonUtil.writeToJson(fileRep.getAll());
+            List<File> files = fileService.getAll();
+            GsonUtil.writeToJson(response, files);
         } else {
-            gsonUtil.writeToJson(fileRep.getById(id));
+            File file = fileService.getById(id);
+            GsonUtil.writeToJson(response, file);
         }
     }
 
     @Override
+    //TODO: get the file from request and save to filepath
+    //TODO: get user_id from request headers
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        GsonUtil gsonUtil = new GsonUtil(response);
         request.setCharacterEncoding("UTF-8");
-        int id = Integer.parseInt(request.getParameter("id"));
         String name = request.getParameter("file_name");
-        String filePath = request.getParameter("file_path");
-        gsonUtil.writeToJson(fileRep.create(new File(id, name, filePath)));
+        //String filePath =
+        ServletInputStream in = request.getInputStream();
+        //Integer userId =
+        File file = fileService.save(in, null, name);
+        GsonUtil.writeToJson(response, file);
     }
 
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        GsonUtil gsonUtil = new GsonUtil(response);
         request.setCharacterEncoding("UTF-8");
+        ServletInputStream in = request.getInputStream();
         int id = Integer.parseInt(request.getParameter("id"));
         String name = request.getParameter("file_name");
-        String filePath = request.getParameter("file_path");
-        gsonUtil.writeToJson(fileRep.update(new File(id, name, filePath)));
+        File file = fileService.update(in, id, name);
+        GsonUtil.writeToJson(response, file);
     }
 
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        GsonUtil gsonUtil = new GsonUtil(response);
         request.setCharacterEncoding("UTF-8");
         int id = Integer.parseInt(request.getParameter("id"));
-        fileRep.delete(id);
-        gsonUtil.writeToJson("File with id=" + id + " was deleted");
+        fileService.delete(id);
+        GsonUtil.writeToJson(response,"File with id=" + id + " was deleted");
     }
 }

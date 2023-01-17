@@ -8,31 +8,31 @@
 
   <servlet>
     <servlet-name>UserServlet</servlet-name>
-    <servlet-class>com.irinayanushkevich.restapi.servlet.UserServlet</servlet-class>
+    <servlet-class>com.irinayanushkevich.restapi.rest.UserRestControllerV1</servlet-class>
   </servlet>
 
   <servlet>
     <servlet-name>EventServlet</servlet-name>
-    <servlet-class>com.irinayanushkevich.restapi.servlet.EventServlet</servlet-class>
+    <servlet-class>com.irinayanushkevich.restapi.rest.EventRestControllerV1</servlet-class>
   </servlet>
 
   <servlet>
     <servlet-name>FileServlet</servlet-name>
-    <servlet-class>com.irinayanushkevich.restapi.servlet.FileServlet</servlet-class>
+    <servlet-class>com.irinayanushkevich.restapi.rest.FileRestControllerV1</servlet-class>
   </servlet>
 
   <servlet-mapping>
     <servlet-name>UserServlet</servlet-name>
-    <url-pattern>/users</url-pattern>
+    <url-pattern>/api/v1/users</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
     <servlet-name>EventServlet</servlet-name>
-    <url-pattern>/events</url-pattern>
+    <url-pattern>/api/v1/events</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
     <servlet-name>FileServlet</servlet-name>
-    <url-pattern>/files</url-pattern>
+    <url-pattern>/api/v1/files</url-pattern>
   </servlet-mapping>
 </web-app>
