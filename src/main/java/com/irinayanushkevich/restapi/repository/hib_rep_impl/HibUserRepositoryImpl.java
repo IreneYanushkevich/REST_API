@@ -17,6 +17,8 @@ public class HibUserRepositoryImpl implements UserRepository {
         try (Session session = HibernateUtil.openSession()) {
             transaction = session.beginTransaction();
             session.persist(user);
+            Integer id = (Integer)session.getIdentifier(user);
+            user.setId(id);
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
@@ -46,7 +48,7 @@ public class HibUserRepositoryImpl implements UserRepository {
     public User getById(Integer id) {
         try (Session session = HibernateUtil.openSession()) {
             return session.createQuery("FROM User u LEFT JOIN FETCH u.events WHERE u.id =:user_id", User.class)
-                    .setParameter("id", id)
+                    .setParameter("user_id", id)
                     .getSingleResult();
         }
     }

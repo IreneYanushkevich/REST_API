@@ -20,6 +20,7 @@
         <!--jakarta.connector.version>3.0.0</jakarta.connector.version-->
         <servlet.api.version>2.5</servlet.api.version>
         <gson.version>2.10.1</gson.version>
+        <version.commons>1.4</version.commons>
 
     </properties>
     <url>http://maven.apache.org</url>
@@ -49,6 +50,13 @@
             <artifactId>gson</artifactId>
             <version>${gson.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <version>1.4</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.flywaydb</groupId>
