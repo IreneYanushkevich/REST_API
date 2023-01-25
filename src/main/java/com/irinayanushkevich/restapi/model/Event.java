@@ -17,8 +17,7 @@ public class Event {
     @JoinColumn(name = "file_id")
     private File file;
 
-    public Event() {
-    }
+    public Event() {    }
 
     public Event(Integer id, User user, File file) {
         this.id = id;
