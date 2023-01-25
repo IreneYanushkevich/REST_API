@@ -17,7 +17,7 @@ public class HibUserRepositoryImpl implements UserRepository {
         try (Session session = HibernateUtil.openSession()) {
             transaction = session.beginTransaction();
             session.persist(user);
-            Integer id = (Integer)session.getIdentifier(user);
+            Integer id = (Integer) session.getIdentifier(user);
             user.setId(id);
             transaction.commit();
         } catch (Exception e) {

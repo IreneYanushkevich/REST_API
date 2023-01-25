@@ -14,7 +14,7 @@ public class User {
     private Integer id;
     @Column(name = "user_name")
     private String name;
-    @OneToMany(mappedBy = "id", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "id", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Event> events;
 
     public User() {

@@ -3,10 +3,10 @@ package com.irinayanushkevich.restapi.rest;
 import com.irinayanushkevich.restapi.model.File;
 import com.irinayanushkevich.restapi.service.FileService;
 import com.irinayanushkevich.restapi.util.GsonUtil;
+import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,7 +17,7 @@ import java.util.List;
 public class FileRestControllerV1 extends HttpServlet {
 
     private final FileService fileService = new FileService();
-    private final String pathForFiles = "src/main/webapp/files";
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Integer id = fileIdMapping(request);
@@ -31,38 +31,26 @@ public class FileRestControllerV1 extends HttpServlet {
     }
 
     @Override
-    //TODO: get the file from request and save to filepath
-    //TODO: get user_id from request headers
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        request.setCharacterEncoding("UTF-8");
-        DiskFileItemFactory disk = new DiskFileItemFactory();
-        disk.setRepository(new java.io.File(pathForFiles));
-        ServletFileUpload uploader = new ServletFileUpload(disk);
-
-        String name = request.getParameter("file_name");
-        //String filePath =
-        ServletInputStream in = request.getInputStream();
-        //Integer userId =
-        File file = fileService.save(in, null, name);
-        GsonUtil.writeToJson(response, file);
+        java.io.File fileIO = getFile(request);
+        Integer userId = Integer.parseInt(request.getHeader("user_id"));
+        File fileRest = fileService.save(fileIO, userId);
+        GsonUtil.writeToJson(response, fileRest);
     }
 
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        request.setCharacterEncoding("UTF-8");
-        ServletInputStream in = request.getInputStream();
-        int id = Integer.parseInt(request.getParameter("id"));
-        String name = request.getParameter("file_name");
-        File file = fileService.update(in, id, name);
+        Integer fileId = fileIdMapping(request);
+        java.io.File fileIO = getFile(request);
+        File file = fileService.update(fileIO, fileId);
         GsonUtil.writeToJson(response, file);
     }
 
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        request.setCharacterEncoding("UTF-8");
-        int id = Integer.parseInt(request.getParameter("id"));
+        Integer id = fileIdMapping(request);
         fileService.delete(id);
-        GsonUtil.writeToJson(response,"File with id=" + id + " was deleted");
+        GsonUtil.writeToJson(response, "File with id=" + id + " was deleted");
     }
 
     private Integer fileIdMapping(HttpServletRequest request) throws UnsupportedEncodingException {
@@ -76,5 +64,39 @@ public class FileRestControllerV1 extends HttpServlet {
         } else {
             return Integer.parseInt(id);
         }
+    }
+
+    private java.io.File getFile(HttpServletRequest request) throws UnsupportedEncodingException {
+        String pathForFiles = "src/main/resources/files/";
+        int memMaxSize = 100 * 1024;
+        int fileMaxSize = 100 * 1024;
+
+        request.setCharacterEncoding("UTF-8");
+        java.io.File fileIO = null;
+        String fileName;
+        DiskFileItemFactory disk = new DiskFileItemFactory();
+
+        disk.setRepository(new java.io.File(pathForFiles));
+        disk.setSizeThreshold(memMaxSize);
+        ServletFileUpload upload = new ServletFileUpload(disk);
+        upload.setSizeMax(fileMaxSize);
+
+        try {
+            List<FileItem> fileItems = upload.parseRequest(request);
+            for (FileItem fileItem : fileItems) {
+                if (!fileItem.isFormField()) {
+                    fileName = fileItem.getName();
+                    if (fileName.lastIndexOf("\\") >= 0) {
+                        fileIO = new java.io.File(pathForFiles + fileName.substring(fileName.lastIndexOf("\\")));
+                    } else {
+                        fileIO = new java.io.File(pathForFiles + fileName.substring(fileName.lastIndexOf("\\") + 1));
+                    }
+                    fileItem.write(fileIO);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return fileIO;
     }
 }

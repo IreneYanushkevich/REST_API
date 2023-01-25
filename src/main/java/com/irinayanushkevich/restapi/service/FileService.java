@@ -10,7 +10,6 @@ import com.irinayanushkevich.restapi.repository.hib_rep_impl.HibEventRepositoryI
 import com.irinayanushkevich.restapi.repository.hib_rep_impl.HibFileRepositoryImpl;
 import com.irinayanushkevich.restapi.repository.hib_rep_impl.HibUserRepositoryImpl;
 
-import java.io.InputStream;
 import java.util.List;
 
 public class FileService {
@@ -19,11 +18,11 @@ public class FileService {
     private final UserRepository userRepository = new HibUserRepositoryImpl();
     private final EventRepository eventRepository = new HibEventRepositoryImpl();
 
-    public File save(InputStream inputStream, Integer userId, String fileName) {
-        File file = new File();
-        file.setFilePath("");  ///????????????????????
-        file.setName(fileName);
-        File createdFile = fileRepository.create(file);
+    public File save(java.io.File file, Integer userId) {
+        File fileForSave = new File();
+        fileForSave.setFilePath(file.getPath());
+        fileForSave.setName(file.getName());
+        File createdFile = fileRepository.create(fileForSave);
 
         User user = userRepository.getById(userId);
 
@@ -39,15 +38,17 @@ public class FileService {
         return fileRepository.getById(id);
     }
 
-    public File update(InputStream inputStream, Integer id, String fileName) {
-        File file = fileRepository.getById(id);
-        file.setFilePath("");  ///????????????????????
-        file.setName(fileName);
-        return fileRepository.update(file);
+    public File update(java.io.File file, Integer fileId) {
+        File fileForEdit = new File();
+        fileForEdit.setId(fileId);
+        fileForEdit.setFilePath(file.getPath());
+        fileForEdit.setName(file.getName());
+
+        return fileRepository.update(fileForEdit);
     }
 
     public void delete(Integer id) {
-        fileRepository.getById(id);
+        fileRepository.delete(id);
     }
 
     public List<File> getAll() {
