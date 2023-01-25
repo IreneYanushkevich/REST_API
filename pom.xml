@@ -103,7 +103,6 @@
                 <version>3.3.2</version>
                 <executions>
                     <execution>
-
                         <configuration>
                             <additionalProperties>
                                 <encoding.source>${project.build.sourceEncoding}</encoding.source>
