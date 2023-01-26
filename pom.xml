@@ -26,6 +26,7 @@
 
     </properties>
     <url>http://maven.apache.org</url>
+
     <dependencies>
         <!--suppress VulnerableLibrariesLocal -->
         <dependency>
