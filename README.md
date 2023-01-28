@@ -6,7 +6,7 @@ User -> Integer id, String name, List<Event> events
 Event -> Integer id, User user, File file
 File -> Integer id, String name, String filePath
 
-№ Требования:
+# Требования:
 
 Все CRUD операции для каждой из сущностей
 Придерживаться подхода MVC
