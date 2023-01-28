@@ -4,6 +4,6 @@
     "linux"
   ],
   "jdk": [
-    "openjdk-19
+    "-openjdk19
   ]
 }
