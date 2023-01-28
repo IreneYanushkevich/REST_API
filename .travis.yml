@@ -4,6 +4,6 @@
     "windows"
   ],
   "jdk": [
-    "openjdk11"
+    "openjdk-18
   ]
 }
