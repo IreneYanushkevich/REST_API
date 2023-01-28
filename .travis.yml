@@ -1,3 +1,9 @@
-language: java
-os: windows
-jdk: openjdk11
+{
+  "language": "java",
+  "os": [
+    "windows"
+  ],
+  "jdk": [
+    "openjdk11"
+  ]
+}
